@@ -1,35 +1,23 @@
-from app.config import load_config
 from fastapi import FastAPI
 
-from app.models import User
-
+from app.models import Feedback
 
 app = FastAPI()
 
-# config = load_config()
-#
-# if config.debug:
-#     app.debug = True
-# else:
-#     app.debug = False
-
-data = {"name": "John Doe", "age": 25}
-user1 = User(**data)
+feedback_db = []
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello, World!"}
+@app.get('/messages')
+async def get_feedback():
+    return feedback_db
 
 
-@app.get("/users")
-def get_users():
-    return user1
-
-
-@app.post("/user")
-def post_user_age(user: User):
-    if user.age >= 18:
-        user.is_adult = True
-    return user
-
+# Задача 2
+@app.post('/feedback')
+async def add_feedback(feedback: Feedback, is_premium: bool = False):
+    feedback.contact.is_premium = is_premium
+    feedback_db.append(feedback)
+    message = f"Спасибо, {feedback.name}! Ваш отзыв сохранён."
+    if is_premium:
+        message += " Ваш отзыв будет рассмотрен в приоритетном порядке."
+    return {"message": message}
