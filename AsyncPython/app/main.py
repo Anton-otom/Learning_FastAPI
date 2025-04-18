@@ -1,6 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 from fastapi import FastAPI, Query
 =======
+=======
+>>>>>>> 453f0f1 (3.3 Работа с заголовками запросов)
 <<<<<<< HEAD
 from fastapi import FastAPI, Depends, status, HTTPException
 from pydantic import BaseModel
@@ -109,40 +112,31 @@ def get_protected_resource(user: User = Depends(authenticate_user)):
 =======
 from uuid import uuid4
 from itsdangerous import URLSafeSerializer
+=======
+from typing import Annotated
+from fastapi import FastAPI, Header, HTTPException
+>>>>>>> c6b2001 (0.4.0 Работа с заголовками запросов)
 
-from fastapi import FastAPI, Query, Form, Response, Cookie
-
-from app.models import User
 
 app = FastAPI()
 
-sample_user: dict = {"username": "user123", "password": "password123"}
-fake_db: list[User] = [User(**sample_user)]
-sessions: dict = {}
 
-
-@app.post('/login')
-async def login(user: User, response: Response):
-    for person in fake_db:
-        if person.username == user.username and person.password == user.password:
-            user_id = str(uuid4())
-            signature = URLSafeSerializer(secret_key="Секретный ключ")
-            session_token = "session_token"
-            confirmation_token = signature.dumps(user_id)
-            sessions[user_id] = user
-            response.set_cookie(key=session_token, value=confirmation_token, max_age=3600, httponly=True)
-            return {"message": "куки установлены"}
-    return {"message": "Invalid username or password"}
-
-
-@app.get('/profile')
-async def user_info(session_token: str = Cookie()):
-    token_serializer = URLSafeSerializer(secret_key="Секретный ключ")
-    user_id = token_serializer.loads(session_token, max_age=4)
-    user = sessions[user_id]
-    if user:
-        return user.dict()
-    return {"message": "Unauthorized"}
-
+<<<<<<< HEAD
 >>>>>>> e39d55e (0.3.0 Дополнительные типы, асинхронность и параметры Cookie)
+<<<<<<< HEAD
 >>>>>>> 5bb4ba0 (3.2 Дополнительные типы, асинхронность и параметры Cookie)
+=======
+=======
+@app.get('/headers')
+def get_headers(
+        user_agent: Annotated[str | None, Header()] = None,
+        accept_language: Annotated[str | None, Header()] = None
+):
+    if not user_agent and not accept_language:
+        raise HTTPException(status_code=400, detail='Необходимые заголовки отсутствуют')
+    return {
+        "User-Agent": user_agent,
+        "Accept-Language": accept_language
+    }
+>>>>>>> c6b2001 (0.4.0 Работа с заголовками запросов)
+>>>>>>> 453f0f1 (3.3 Работа с заголовками запросов)
