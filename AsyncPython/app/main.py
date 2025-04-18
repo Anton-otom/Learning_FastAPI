@@ -1,9 +1,12 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from fastapi import FastAPI, Query
 =======
 =======
 >>>>>>> 453f0f1 (3.3 Работа с заголовками запросов)
+=======
+>>>>>>> 6159b03 (4.1 Реализация базовой аутентификации)
 <<<<<<< HEAD
 from fastapi import FastAPI, Depends, status, HTTPException
 from pydantic import BaseModel
@@ -116,11 +119,18 @@ from itsdangerous import URLSafeSerializer
 from typing import Annotated
 from fastapi import FastAPI, Header, HTTPException
 >>>>>>> c6b2001 (0.4.0 Работа с заголовками запросов)
+=======
+from fastapi import FastAPI, Depends, status, HTTPException
+from pydantic import BaseModel
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+>>>>>>> 98ca663 (4.1 Реализация базовой аутентификации)
 
 
 app = FastAPI()
+security = HTTPBasic()
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> e39d55e (0.3.0 Дополнительные типы, асинхронность и параметры Cookie)
 <<<<<<< HEAD
@@ -139,4 +149,40 @@ def get_headers(
         "Accept-Language": accept_language
     }
 >>>>>>> c6b2001 (0.4.0 Работа с заголовками запросов)
+<<<<<<< HEAD
 >>>>>>> 453f0f1 (3.3 Работа с заголовками запросов)
+=======
+=======
+class User(BaseModel):
+    username: str
+    password: str
+
+
+# Симуляция базы данных в виде списка объектов пользователей
+USER_DATA = [
+    User(**{"username": "user1", "password": "pass1"}),
+    User(**{"username": "user2", "password": "pass2"})
+]
+
+
+def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
+    user = get_user_from_db(credentials.username)
+    if user is None or user.password != credentials.password:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid credentials",
+                            headers={"WWW-Authenticate": "Basic"})
+    return user
+
+
+def get_user_from_db(username: str):
+    for user in USER_DATA:
+        if user.username == username:
+            return user
+    return None
+
+
+@app.get("/login")
+def get_protected_resource(user: User = Depends(authenticate_user)):
+    return {"message": "You got my secret, welcome"}
+>>>>>>> 98ca663 (4.1 Реализация базовой аутентификации)
+>>>>>>> 6159b03 (4.1 Реализация базовой аутентификации)
